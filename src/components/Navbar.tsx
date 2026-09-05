@@ -2,22 +2,19 @@ import React from 'react';
 import { Disc, LayoutDashboard, PlusCircle, CheckCircle2, Palette } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { PWAInstallButton } from './PWAInstallButton';
-import { GoogleUserMenu } from './GoogleUserMenu';
 
 interface NavbarProps {
   currentView: 'form' | 'list';
   onSelectView: (view: 'form' | 'list') => void;
   savedCount: number;
   isDraftSaved: boolean;
-  onFillConsultantName?: (name: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentView,
   onSelectView,
   savedCount,
-  isDraftSaved,
-  onFillConsultantName
+  isDraftSaved
 }) => {
   const { config, themeMode, openOptions } = useTheme();
   const isDark = themeMode === 'dark';
@@ -82,9 +79,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>Salvo</span>
             </div>
           )}
-
-          {/* Google Sign-in / User Profile */}
-          <GoogleUserMenu onFillConsultantName={onFillConsultantName} />
 
           {/* PWA Install Button */}
           <PWAInstallButton />

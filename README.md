@@ -57,23 +57,6 @@ O projeto possui código 100% desacoplado e compatível com **Capacitor**, permi
 
 ---
 
-## 🔐 Autenticação com Conta Google
-
-O **RecapData** conta com login integrado via **Google Identity / Firebase Authentication**, facilitando o dia a dia do consultor técnico no pátio e profissionalizando os laudos emitidos:
-
-### Funcionalidades de Autenticação
-- **Login Instantâneo com 1 Clique**: Botão oficial *"Entrar com Google"* na barra de navegação com pop-up seguro, sem necessidade de criar novas senhas.
-- **Identificação Automática no Laudo**:
-  - Na **Etapa 1 (Identificação)**, o aplicativo detecta o consultor autenticado e disponibiliza o atalho rápido: *"Preencher com meu nome"*.
-  - O Laudo Técnico Oficial em PDF e as mensagens de WhatsApp passam a carregar automaticamente a assinatura e responsabilidade técnica do consultor autenticado.
-- **Menu de Perfil de Usuário**:
-  - Exibe a foto oficial do Google, nome do consultor e e-mail corporativo/pessoal.
-  - Indicador de status de conexão ativa e opção de desconectar com segurança (*Logout*).
-- **Sessão Persistente (Offline Resilient)**:
-  - Uma vez autenticado, o token e o perfil do usuário permanecem salvos no dispositivo, permitindo que o consultor abra o aplicativo e continue trabalhando mesmo se estiver sem conexão no fundo de uma garagem.
-
----
-
 ## ⚖️ Análise Estratégica: Vantagens e Pontos Fracos da Plataforma
 
 O uso do **RecapData** transforma a abordagem de vendas no setor de pneus de carga. Abaixo estão detalhadas as vantagens competitivas e os desafios operacionais identificados para os dois principais perfis de usuários:

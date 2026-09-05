@@ -164,10 +164,6 @@ export default function App() {
         onSelectView={setCurrentView}
         savedCount={savedCollections.length}
         isDraftSaved={isDraftSaved}
-        onFillConsultantName={(name) => {
-          handleFormUpdate({ consultantName: name });
-          showToast(`Nome preenchido no laudo: ${name}`);
-        }}
       />
 
       {/* Main Content Area */}
