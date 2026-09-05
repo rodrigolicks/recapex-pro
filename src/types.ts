@@ -1,7 +1,8 @@
 export type VehicleConfigurationType = 
+  | 'cavalo_duplo_reboque_3e' // 22 rodas (Cavalo 2 eixos traseiros pneu duplo + Reboque 3 eixos pneu duplo)
+  | 'cavalo_carreta_3e' // 18 rodas (Cavalo 4x2 Toco + Semirreboque 3 eixos)
   | 'toco_3_4' // 6 rodas
   | 'truck_6x2' // 10 rodas
-  | 'cavalo_carreta_3e' // 18 rodas (Caminhão simples + Carreta)
   | 'vanderleia' // 18 rodas
   | 'bitrem_7e' // 22 rodas (Bitrem)
   | 'rodotrem_9e' // 30 rodas (Rodotrem / Tritrem)
@@ -13,6 +14,7 @@ export interface VehicleConfigOption {
   sublabel: string;
   defaultTires: number;
   description: string;
+  axleScheme?: string;
 }
 
 export interface FormDataState {

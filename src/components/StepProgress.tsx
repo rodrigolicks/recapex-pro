@@ -21,32 +21,32 @@ export const StepProgress: React.FC<StepProgressProps> = ({ currentStep, onSelec
   const progressPercent = Math.round((currentStep / STEPS_CONFIG.length) * 100);
 
   return (
-    <div className="w-full bg-slate-900/90 backdrop-blur border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl mb-6">
+    <div className="w-full max-w-full overflow-hidden bg-slate-900/90 backdrop-blur border border-slate-800 rounded-2xl p-3 sm:p-5 shadow-xl mb-6">
       {/* Current Step Status Header */}
-      <div className="flex items-center justify-between gap-3 mb-3.5">
+      <div className="flex items-center justify-between gap-2 sm:gap-3 mb-3.5">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm shrink-0">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">
             {currentStep}
           </div>
           <div className="min-w-0">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-amber-400">
+            <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-400">
               Etapa {currentStep} de {STEPS_CONFIG.length}
             </div>
-            <h3 className="text-sm sm:text-base font-bold text-slate-100 truncate">
+            <h3 className="text-xs sm:text-base font-bold text-slate-100 truncate">
               {currentStepConfig.title}
             </h3>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-xs font-semibold text-slate-400">
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className="text-[11px] sm:text-xs font-semibold text-slate-400">
             {progressPercent}% Concluído
           </span>
         </div>
       </div>
 
       {/* 6 Step Interactive Tabs Grid - Perfectly framed inside canvas */}
-      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 w-full">
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2 w-full">
         {STEPS_CONFIG.map((item) => {
           const isCompleted = currentStep > item.step;
           const isCurrent = currentStep === item.step;

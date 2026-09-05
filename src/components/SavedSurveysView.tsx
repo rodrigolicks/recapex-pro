@@ -2,12 +2,14 @@ import React, { useState, useMemo } from 'react';
 import { 
   Building2, Truck, Disc, Plus, Search, Filter, Download, 
   Trash2, Edit3, Eye, Copy, Share2, Calendar, MapPin, 
-  TrendingUp, DollarSign, Award, ChevronRight, CheckCircle2, FileSpreadsheet
+  TrendingUp, DollarSign, Award, ChevronRight, CheckCircle2, FileSpreadsheet, FileText, Check
 } from 'lucide-react';
 import { FormDataState } from '../types';
 import { calculateFleetMetrics } from '../utils/calculations';
 import { formatCurrency, formatDate, formatNumber } from '../utils/formatters';
 import { exportCollectionsAsCSV, exportCollectionsAsJSON } from '../utils/storage';
+import { downloadSurveyPDF } from '../utils/pdfGenerator';
+import { useTheme } from '../context/ThemeContext';
 
 interface SavedSurveysViewProps {
   collections: FormDataState[];
@@ -26,9 +28,24 @@ export const SavedSurveysView: React.FC<SavedSurveysViewProps> = ({
   onDeleteSurvey,
   onDuplicateSurvey,
 }) => {
+  const { config, themeMode } = useTheme();
+  const isDark = themeMode === 'dark';
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSegment, setSelectedSegment] = useState('all');
   const [sortBy, setSortBy] = useState<'recent' | 'trucks' | 'score'>('recent');
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
+  const handleDownloadPDF = (survey: FormDataState) => {
+    setDownloadingId(survey.id);
+    try {
+      downloadSurveyPDF(survey, config.primaryHex);
+    } catch (err) {
+      console.error('Erro ao gerar PDF da coleta:', err);
+    } finally {
+      setTimeout(() => setDownloadingId(null), 2000);
+    }
+  };
 
   // Compute Global Dashboard KPIs
   const dashboardStats = useMemo(() => {
@@ -90,15 +107,15 @@ export const SavedSurveysView: React.FC<SavedSurveysViewProps> = ({
   }, [collections, searchTerm, selectedSegment, sortBy]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-full overflow-x-hidden">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/90 border border-slate-800 p-5 rounded-2xl shadow-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/90 border border-slate-800 p-4 sm:p-5 rounded-2xl shadow-xl w-full max-w-full overflow-hidden">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2.5">
-            <Building2 className="w-7 h-7 text-amber-400" />
-            Painel de Coletas & Frotas Cadastradas
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center gap-2.5">
+            <Building2 className="w-6 h-6 sm:w-7 sm:h-7 text-amber-400 shrink-0" />
+            <span>Painel de Coletas & Frotas Cadastradas</span>
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
             Gestão técnica e comercial de transportadoras mapeadas para reforma de pneus.
           </p>
         </div>
@@ -128,7 +145,11 @@ export const SavedSurveysView: React.FC<SavedSurveysViewProps> = ({
             type="button"
             id="btn-nova-coleta"
             onClick={onNewSurvey}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-sm font-bold shadow-lg shadow-amber-500/20 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-950 text-sm font-bold shadow-lg transition-all hover:opacity-90"
+            style={{
+              backgroundColor: config.primaryHex,
+              boxShadow: `0 10px 20px -5px ${config.primaryHex}40`
+            }}
           >
             <Plus className="w-4 h-4 stroke-[3]" />
             <span>Nova Coleta</span>
@@ -184,7 +205,7 @@ export const SavedSurveysView: React.FC<SavedSurveysViewProps> = ({
       </div>
 
       {/* Search and Filters Bar */}
-      <div className="bg-slate-900/60 border border-slate-800 p-3.5 rounded-xl flex flex-col md:flex-row gap-3 items-center justify-between">
+      <div className="bg-slate-900/60 border border-slate-800 p-3.5 rounded-xl flex flex-col md:flex-row gap-3 items-center justify-between w-full max-w-full overflow-hidden">
         <div className="relative w-full md:w-80">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
@@ -254,7 +275,7 @@ export const SavedSurveysView: React.FC<SavedSurveysViewProps> = ({
               <div
                 key={col.id}
                 id={`survey-card-${col.id}`}
-                className="bg-slate-900/80 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 transition-all shadow-md flex flex-col justify-between"
+                className="bg-slate-900/80 border border-slate-800 hover:border-slate-700 rounded-2xl p-4 sm:p-5 transition-all shadow-md flex flex-col justify-between w-full max-w-full overflow-hidden"
               >
                 <div>
                   {/* Top card header */}
@@ -319,22 +340,37 @@ export const SavedSurveysView: React.FC<SavedSurveysViewProps> = ({
 
                 {/* Footer Action Buttons */}
                 <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-800/50">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex flex-wrap items-center gap-1.5">
                     <button
                       onClick={() => onViewReport(col)}
                       className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 text-xs font-semibold border border-sky-500/30 transition-colors"
                       title="Visualizar laudo completo e WhatsApp"
                     >
                       <Eye className="w-3.5 h-3.5" />
-                      <span>Ficha Completa</span>
+                      <span>Ficha</span>
+                    </button>
+
+                    <button
+                      onClick={() => handleDownloadPDF(col)}
+                      disabled={downloadingId === col.id}
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-slate-950 text-xs font-bold shadow transition-all hover:opacity-90 disabled:opacity-50"
+                      style={{ backgroundColor: config.primaryHex }}
+                      title="Baixar Laudo Técnico Oficial em PDF"
+                    >
+                      {downloadingId === col.id ? (
+                        <Check className="w-3.5 h-3.5 text-slate-950" />
+                      ) : (
+                        <Download className="w-3.5 h-3.5 text-slate-950" />
+                      )}
+                      <span>{downloadingId === col.id ? 'Baixando...' : 'PDF'}</span>
                     </button>
 
                     <button
                       onClick={() => onEditSurvey(col)}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors"
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors"
                       title="Editar respostas"
                     >
-                      <Edit3 className="w-3.5 h-3.5 text-amber-400" />
+                      <Edit3 className="w-3.5 h-3.5" style={{ color: config.primaryHex }} />
                       <span>Editar</span>
                     </button>
                   </div>

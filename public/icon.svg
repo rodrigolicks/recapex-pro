@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" rx="100" fill="#0f172a"/>
+  <circle cx="256" cy="256" r="180" stroke="#f59e0b" stroke-width="38" stroke-dasharray="32 16"/>
+  <circle cx="256" cy="256" r="130" stroke="#fbbf24" stroke-width="8"/>
+  <circle cx="256" cy="256" r="65" fill="#f59e0b"/>
+  <circle cx="256" cy="256" r="28" fill="#0f172a"/>
+  <!-- Recap indicator groove -->
+  <path d="M190 256 H322" stroke="#0f172a" stroke-width="8" stroke-linecap="round"/>
+</svg>

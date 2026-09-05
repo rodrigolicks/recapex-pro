@@ -13,6 +13,57 @@ export const FleetSilhouette: React.FC<SilhouetteProps> = ({ type, className = '
   const wheelColor = selected ? '#0369a1' : '#334155';
 
   switch (type) {
+    case 'cavalo_duplo_reboque_3e':
+      return (
+        <svg viewBox="0 0 395 90" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* Cabin (Heavy Truck 6x2 / 6x4) */}
+          <path d="M15 65 L15 35 L40 20 L68 20 L68 65 Z" fill={fillColor} stroke={strokeColor} strokeWidth="2.5" strokeLinejoin="round" />
+          {/* Cabin Window */}
+          <path d="M38 25 L61 25 L61 42 L25 42 Z" fill={selected ? '#bae6fd' : '#cbd5e1'} stroke={strokeColor} strokeWidth="1.5" />
+          {/* Grille */}
+          <line x1="18" y1="48" x2="18" y2="60" stroke={strokeColor} strokeWidth="2" />
+          <line x1="24" y1="48" x2="24" y2="60" stroke={strokeColor} strokeWidth="2" />
+          {/* Chassis Extended Tandem for 2 rear axles */}
+          <rect x="68" y="52" width="46" height="13" fill="#64748b" stroke={strokeColor} strokeWidth="2" />
+          {/* 5th Wheel Plate (Quinta Roda) */}
+          <rect x="88" y="47" width="16" height="5" rx="1.5" fill="#334155" stroke={strokeColor} strokeWidth="1.5" />
+          {/* Semi-trailer / Reboque Body */}
+          <rect x="108" y="20" width="270" height="45" rx="3" fill={fillColor} stroke={strokeColor} strokeWidth="2.5" />
+          {/* Trailer landing gear (patolas) */}
+          <line x1="130" y1="65" x2="130" y2="74" stroke="#64748b" strokeWidth="3" />
+          <line x1="126" y1="74" x2="134" y2="74" stroke="#64748b" strokeWidth="2" />
+          {/* Trailer structural ribs */}
+          <line x1="170" y1="22" x2="170" y2="63" stroke={strokeColor} strokeWidth="1" strokeDasharray="3 3" opacity="0.6" />
+          <line x1="225" y1="22" x2="225" y2="63" stroke={strokeColor} strokeWidth="1" strokeDasharray="3 3" opacity="0.6" />
+          <line x1="280" y1="22" x2="280" y2="63" stroke={strokeColor} strokeWidth="1" strokeDasharray="3 3" opacity="0.6" />
+
+          {/* CAVALO: 1 Eixo Dianteiro Direcional (Pneu simples - 2 pneus) */}
+          <circle cx="35" cy="67" r="11" fill={wheelColor} />
+          <circle cx="35" cy="67" r="4.5" fill="#f8fafc" />
+
+          {/* CAVALO: 2 Eixos Traseiros Pneu Duplo (Tandem 6x2 / 6x4 - 8 pneus) */}
+          <path d="M72 63 Q85 58 98 63" stroke="#94a3b8" strokeWidth="2" fill="none" />
+          {/* 1º Eixo Traseiro Cavalo (Duplo) */}
+          <circle cx="72" cy="67" r="11" fill={wheelColor} />
+          <circle cx="72" cy="67" r="4.5" fill="#f8fafc" />
+          {/* 2º Eixo Traseiro Cavalo (Duplo) */}
+          <circle cx="98" cy="67" r="11" fill={wheelColor} />
+          <circle cx="98" cy="67" r="4.5" fill="#f8fafc" />
+
+          {/* REBOQUE: 3 Eixos Traseiros Pneu Duplo (12 pneus) */}
+          <path d="M305 63 L365 63" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="4 2" />
+          {/* 1º Eixo Reboque (Duplo) */}
+          <circle cx="305" cy="67" r="11" fill={wheelColor} />
+          <circle cx="305" cy="67" r="4.5" fill="#f8fafc" />
+          {/* 2º Eixo Reboque (Duplo) */}
+          <circle cx="335" cy="67" r="11" fill={wheelColor} />
+          <circle cx="335" cy="67" r="4.5" fill="#f8fafc" />
+          {/* 3º Eixo Reboque (Duplo) */}
+          <circle cx="365" cy="67" r="11" fill={wheelColor} />
+          <circle cx="365" cy="67" r="4.5" fill="#f8fafc" />
+        </svg>
+      );
+
     case 'cavalo_carreta_3e':
       return (
         <svg viewBox="0 0 380 90" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">

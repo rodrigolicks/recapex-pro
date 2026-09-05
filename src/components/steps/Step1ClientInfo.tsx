@@ -2,6 +2,7 @@ import React from 'react';
 import { Building2, User, Phone, Mail, MapPin, UserCheck, Calendar } from 'lucide-react';
 import { FormDataState } from '../../types';
 import { formatPhone } from '../../utils/formatters';
+import { useAuth } from '../../context/AuthContext';
 
 interface Step1Props {
   formData: FormDataState;
@@ -9,6 +10,7 @@ interface Step1Props {
 }
 
 export const Step1ClientInfo: React.FC<Step1Props> = ({ formData, onChange }) => {
+  const { user } = useAuth();
   return (
     <div className="space-y-6">
       {/* Section Header */}
@@ -149,9 +151,20 @@ export const Step1ClientInfo: React.FC<Step1Props> = ({ formData, onChange }) =>
         {/* Consultor Técnico da Recapadora */}
         <div className="md:col-span-2 bg-slate-900/60 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <div className="flex-1 w-full">
-            <label htmlFor="consultantName" className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
-              Consultor Técnico / Vendedor da Recapadora
-            </label>
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <label htmlFor="consultantName" className="block text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Consultor Técnico / Vendedor da Recapadora
+              </label>
+              {user?.displayName && formData.consultantName !== user.displayName && (
+                <button
+                  type="button"
+                  onClick={() => onChange({ consultantName: user.displayName || '' })}
+                  className="text-xs text-amber-400 hover:text-amber-300 font-medium underline flex items-center gap-1"
+                >
+                  <span>Preencher com meu nome ({user.displayName.split(' ')[0]})</span>
+                </button>
+              )}
+            </div>
             <div className="relative">
               <UserCheck className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-400" />
               <input
@@ -163,6 +176,12 @@ export const Step1ClientInfo: React.FC<Step1Props> = ({ formData, onChange }) =>
                 className="w-full bg-slate-950 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-slate-100 placeholder-slate-600 text-sm focus:ring-1 focus:ring-amber-500"
               />
             </div>
+            {user && (
+              <p className="text-[11px] text-emerald-400 mt-1.5 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <span>Conectado via Google como <strong className="font-semibold">{user.displayName || user.email}</strong></span>
+              </p>
+            )}
           </div>
 
           <div className="flex items-center gap-2 text-xs text-slate-400 bg-slate-950/80 px-3 py-2.5 rounded-lg border border-slate-800 shrink-0">

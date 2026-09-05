@@ -1,6 +1,6 @@
 {
-  "name": "Remix Coleta Pneus Recapadora",
-  "description": "Aplicativo profissional de coleta de dados e diagnóstico técnico-comercial de pneus e frotas para recapadoras e reformadoras de pneus. Coleta dados para análise posterior, auxiliando na tomada de decisão entre trocar, recapar ou misto, com interface 100% responsiva e ajustada ao canvas.",
+  "name": "RecapData",
+  "description": "Aplicativo PWA e mobile para coleta técnica e diagnóstico de frotas e pneus para reformadoras e vendedores de pneus.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

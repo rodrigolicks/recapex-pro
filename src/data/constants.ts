@@ -2,24 +2,35 @@ import { FormDataState, VehicleConfigOption } from '../types';
 
 export const VEHICLE_CONFIGURATIONS: VehicleConfigOption[] = [
   {
+    id: 'cavalo_duplo_reboque_3e',
+    label: 'Cavalo 6x2 / 6x4 + Reboque 3 Eixos Duplos',
+    sublabel: 'Cavalo 2 Eixos Traseiros Pneu Duplo + Reboque 3 Eixos Pneu Duplo',
+    defaultTires: 22,
+    axleScheme: 'Cavalo: 1E simples + 2E duplos (10) | Reboque: 3E duplos (12) = 22 pneus',
+    description: 'Composição de 6 eixos (Carreta LS): cavalo mecânico com 1 eixo dianteiro direcional simples + 2 eixos traseiros com rodagem dupla (10 pneus) e reboque com 3 eixos de rodagem dupla (12 pneus). Total: 22 pneus.'
+  },
+  {
     id: 'cavalo_carreta_3e',
-    label: 'Caminhão Carreta 3 Eixos',
-    sublabel: 'Cavalo 6x2 / 6x4 + Semirreboque 3 Eixos',
+    label: 'Cavalo 4x2 (Toco) + Reboque 3 Eixos',
+    sublabel: 'Cavalo 1 Eixo Traseiro Duplo + Reboque 3 Eixos Duplo',
     defaultTires: 18,
-    description: 'Configuração padrão para transporte rodoviário de média e longa distância (18 a 22 pneus).'
+    axleScheme: 'Cavalo: 1E simples + 1E duplo (6) | Reboque: 3E duplos (12) = 18 pneus',
+    description: 'Cavalo toco 4x2 (6 pneus) com semirreboque de 3 eixos de pneus duplos (12 pneus). Total de 18 pneus.'
   },
   {
     id: 'bitrem_7e',
     label: 'Bitrem 7 Eixos',
-    sublabel: 'Cavalo 6x4 + 2 Semirreboques (7 eixos)',
+    sublabel: 'Cavalo 6x4 + 2 Semirreboques (7 Eixos)',
     defaultTires: 22,
+    axleScheme: 'Cavalo: 10 pneus | 1º Semi: 2E duplos (8) | 2º Semi: 1E duplo (4) = 22 pneus',
     description: 'Muito comum no transporte de grãos, granéis e combustíveis (22 pneus).'
   },
   {
     id: 'rodotrem_9e',
     label: 'Rodotrem / Tritrem 9 Eixos',
-    sublabel: 'Cavalo 6x4 + Dolly + 2 Semirreboques (9 eixos)',
+    sublabel: 'Cavalo 6x4 + Dolly + 2 Semirreboques (9 Eixos)',
     defaultTires: 30,
+    axleScheme: 'Cavalo: 10 pneus | Dolly: 2E duplos (8) | Semis: 3E duplos (12) = 30 pneus',
     description: 'Composição de alta capacidade de carga para agronegócio e florestal (30 pneus).'
   },
   {
@@ -27,13 +38,15 @@ export const VEHICLE_CONFIGURATIONS: VehicleConfigOption[] = [
     label: 'Truck 6x2 / 6x4 (Chassi Rígido)',
     sublabel: 'Caminhão Pesado / Médio Rígido',
     defaultTires: 10,
-    description: 'Utilizado em distribuição regional, caçambas, basculantes e carga seca (10 a 12 pneus).'
+    axleScheme: '1E dianteiro simples (2) + 2E traseiros duplos (8) = 10 pneus',
+    description: 'Utilizado em distribuição regional, caçambas, basculantes e carga seca (10 pneus).'
   },
   {
     id: 'toco_3_4',
     label: 'Toco 4x2 / 3/4',
     sublabel: 'Caminhão Urbano / Leve',
     defaultTires: 6,
+    axleScheme: '1E dianteiro simples (2) + 1E traseiro duplo (4) = 6 pneus',
     description: 'Distribuição urbana e coletas de curto raio (6 pneus).'
   },
   {
@@ -41,7 +54,8 @@ export const VEHICLE_CONFIGURATIONS: VehicleConfigOption[] = [
     label: 'Carreta Vanderleia (Eixos Espaçados)',
     sublabel: 'Cavalo + 3 Eixos Distanciados',
     defaultTires: 18,
-    description: 'Semirreboque com eixos pneumáticos espaçados para maior PBTC (18 pneus).'
+    axleScheme: 'Cavalo: 6 ou 10 pneus | Carreta: 3 eixos espaçados (12) = 18 a 22 pneus',
+    description: 'Semirreboque com eixos pneumáticos espaçados para maior PBTC (18 a 22 pneus).'
   },
 ];
 
@@ -166,7 +180,7 @@ export const INITIAL_FORM_STATE: FormDataState = {
   state: '',
 
   // 2. Perfil da Frota
-  vehicleTypes: ['cavalo_carreta_3e'],
+  vehicleTypes: ['cavalo_duplo_reboque_3e'],
   truckCount: '',
   transportSegment: 'Grãos / Agronegócio',
   predominantTruckBrand: 'Scania',
@@ -266,7 +280,7 @@ export const SAMPLE_SAVED_COLLECTIONS: FormDataState[] = [
     email: 'ana.siqueira@petrotransdist.com.br',
     city: 'Paulínia',
     state: 'SP',
-    vehicleTypes: ['cavalo_carreta_3e', 'bitrem_7e'],
+    vehicleTypes: ['cavalo_duplo_reboque_3e', 'bitrem_7e'],
     truckCount: 28,
     transportSegment: 'Combustíveis / Cargas Perigosas',
     predominantTruckBrand: 'Scania',

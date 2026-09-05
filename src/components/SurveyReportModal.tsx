@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
-import { X, Printer, Share2, Copy, Check, Building2, Truck, Disc, Repeat, Fuel, Target, Phone, Mail, MapPin, Calendar, Award, ShieldCheck, DollarSign } from 'lucide-react';
+import { 
+  X, Printer, Share2, Copy, Check, Building2, Truck, Disc, 
+  Repeat, Fuel, Target, Phone, Mail, MapPin, Calendar, Award, 
+  ShieldCheck, DollarSign, Download, ExternalLink, Loader2 
+} from 'lucide-react';
 import { FormDataState } from '../types';
 import { calculateFleetMetrics } from '../utils/calculations';
 import { formatCurrency, formatDate, formatNumber } from '../utils/formatters';
 import { VEHICLE_CONFIGURATIONS } from '../data/constants';
+import { downloadSurveyPDF, openSurveyPDFInNewTab } from '../utils/pdfGenerator';
+import { useTheme } from '../context/ThemeContext';
 
 interface SurveyReportModalProps {
   formData: FormDataState;
@@ -12,6 +18,11 @@ interface SurveyReportModalProps {
 
 export const SurveyReportModal: React.FC<SurveyReportModalProps> = ({ formData, onClose }) => {
   const [copied, setCopied] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [pdfSuccess, setPdfSuccess] = useState(false);
+
+  const { config, themeMode } = useTheme();
+  const isDark = themeMode === 'dark';
   const metrics = calculateFleetMetrics(formData);
 
   const vehicleLabels = (formData.vehicleTypes || []).map(id => {
@@ -85,39 +96,109 @@ _Coleta realizada via App de Diagnóstico Técnico de Frotas_`;
     window.open(url, '_blank');
   };
 
+  const handleDownloadPDF = () => {
+    setIsGeneratingPDF(true);
+    try {
+      downloadSurveyPDF(formData, config.primaryHex);
+      setPdfSuccess(true);
+      setTimeout(() => setPdfSuccess(false), 3000);
+    } catch (err) {
+      console.error('Erro ao gerar PDF:', err);
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
+  const handleOpenPDF = () => {
+    try {
+      openSurveyPDFInNewTab(formData, config.primaryHex);
+    } catch (err) {
+      console.error('Erro ao abrir PDF:', err);
+    }
+  };
+
   const handlePrint = () => {
     window.print();
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto print:p-0 print:bg-white">
-      <div className="bg-slate-900 border border-slate-700 w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden my-auto flex flex-col max-h-[92vh] print:max-h-none print:border-none print:shadow-none print:bg-white print:text-black">
+    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto overflow-x-hidden print:p-0 print:bg-white w-full max-w-full">
+      <div className={`border w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden my-auto flex flex-col max-h-[92vh] print:max-h-none print:border-none print:shadow-none print:bg-white print:text-black ${
+        isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'
+      }`}>
         {/* Modal Header */}
-        <div className="p-4 sm:p-5 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between gap-3 sticky top-0 z-10 print:hidden">
+        <div className={`p-4 sm:p-5 border-b flex flex-wrap items-center justify-between gap-3 sticky top-0 z-10 print:hidden ${
+          isDark ? 'bg-slate-900/95 border-slate-800' : 'bg-slate-50/95 border-slate-200'
+        }`}>
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
+            <div 
+              className="p-2 rounded-xl border"
+              style={{
+                backgroundColor: `${config.primaryHex}15`,
+                borderColor: `${config.primaryHex}40`,
+                color: config.primaryHex
+              }}
+            >
               <Award className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-100">Ficha Técnica & Diagnóstico Comercial</h3>
-              <p className="text-xs text-slate-400">Resumo completo da coleta de dados de pneus da frota</p>
+              <h3 className={`text-base sm:text-lg font-bold ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
+                Ficha Técnica & Diagnóstico Comercial
+              </h3>
+              <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                Resumo completo da coleta de dados de pneus da frota
+              </p>
             </div>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={handleDownloadPDF}
+              disabled={isGeneratingPDF}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-slate-950 text-xs font-bold shadow-md transition-all hover:opacity-90 disabled:opacity-50"
+              style={{ backgroundColor: config.primaryHex }}
+              title="Baixar Laudo Técnico Oficial em PDF"
+            >
+              {isGeneratingPDF ? (
+                <Loader2 className="w-4 h-4 animate-spin text-slate-950" />
+              ) : pdfSuccess ? (
+                <Check className="w-4 h-4 text-slate-950" />
+              ) : (
+                <Download className="w-4 h-4 text-slate-950" />
+              )}
+              <span>{pdfSuccess ? 'PDF Baixado!' : 'Baixar PDF'}</span>
+            </button>
+
+            <button
+              onClick={handleOpenPDF}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-colors ${
+                isDark 
+                  ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700' 
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
+              }`}
+              title="Abrir PDF em nova aba"
+            >
+              <ExternalLink className="w-4 h-4" />
+              <span className="hidden sm:inline">Visualizar PDF</span>
+            </button>
+
             <button
               onClick={handleCopyText}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors"
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-colors ${
+                isDark 
+                  ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700' 
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
+              }`}
               title="Copiar texto formatado"
             >
               {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-              <span className="hidden sm:inline">{copied ? 'Copiado!' : 'Copiar Texto'}</span>
+              <span className="hidden sm:inline">{copied ? 'Copiado!' : 'Copiar'}</span>
             </button>
 
             <button
               onClick={handleShareWhatsApp}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md shadow-emerald-950/40 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md transition-colors"
               title="Enviar para WhatsApp"
             >
               <Share2 className="w-4 h-4" />
@@ -126,16 +207,23 @@ _Coleta realizada via App de Diagnóstico Técnico de Frotas_`;
 
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow-md shadow-sky-950/40 transition-colors"
-              title="Imprimir ou Salvar em PDF"
+              className={`p-2 rounded-xl border transition-colors ${
+                isDark 
+                  ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700' 
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
+              }`}
+              title="Imprimir tela"
             >
               <Printer className="w-4 h-4" />
-              <span className="hidden sm:inline">Imprimir / PDF</span>
             </button>
 
             <button
               onClick={onClose}
-              className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-xl transition-colors"
+              className={`p-2 rounded-xl transition-colors ${
+                isDark 
+                  ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800' 
+                  : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200'
+              }`}
               title="Fechar"
             >
               <X className="w-5 h-5" />
@@ -144,36 +232,55 @@ _Coleta realizada via App de Diagnóstico Técnico de Frotas_`;
         </div>
 
         {/* Modal Printable Content */}
-        <div className="p-5 sm:p-8 overflow-y-auto space-y-6 text-slate-200 print:text-slate-900 print:p-0 print:overflow-visible">
+        <div className={`p-5 sm:p-8 overflow-y-auto space-y-6 ${
+          isDark ? 'text-slate-200' : 'text-slate-800'
+        } print:text-slate-900 print:p-0 print:overflow-visible`}>
           {/* Printable Report Header */}
-          <div className="border-b-2 border-amber-500 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div 
+            className="border-b-2 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+            style={{ borderBottomColor: config.primaryHex }}
+          >
             <div>
-              <div className="text-xs uppercase tracking-wider font-bold text-amber-500 print:text-amber-700">
+              <div 
+                className="text-xs uppercase tracking-wider font-bold"
+                style={{ color: config.primaryHex }}
+              >
                 Laudo Técnico de Oportunidade & Reforma
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-slate-100 print:text-slate-900 mt-1">
+              <h1 className={`text-2xl sm:text-3xl font-black mt-1 ${
+                isDark ? 'text-slate-100' : 'text-slate-900'
+              } print:text-slate-900`}>
                 {formData.companyName || 'Transportadora Sem Nome'}
               </h1>
               <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 print:text-slate-600 mt-2">
                 <span className="flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-amber-400 print:text-amber-700" />
+                  <MapPin className="w-3.5 h-3.5" style={{ color: config.primaryHex }} />
                   {formData.city || 'Cidade'}, {formData.state || 'UF'}
                 </span>
                 <span className="flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5 text-amber-400 print:text-amber-700" />
+                  <Calendar className="w-3.5 h-3.5" style={{ color: config.primaryHex }} />
                   {formatDate(formData.createdAt)}
                 </span>
                 <span className="flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400 print:text-amber-700" />
+                  <ShieldCheck className="w-3.5 h-3.5" style={{ color: config.primaryHex }} />
                   Consultor: {formData.consultantName || 'Não especificado'}
                 </span>
               </div>
             </div>
 
             {/* Score Pill */}
-            <div className="bg-slate-950/80 print:bg-slate-100 border border-slate-800 print:border-slate-300 p-3.5 rounded-xl text-center shrink-0 min-w-[140px]">
+            <div className={`p-3.5 rounded-xl text-center shrink-0 min-w-[140px] border ${
+              isDark 
+                ? 'bg-slate-950/80 border-slate-800' 
+                : 'bg-slate-50 border-slate-200'
+            } print:bg-slate-100 print:border-slate-300`}>
               <div className="text-[10px] uppercase font-bold text-slate-400 print:text-slate-600">Score de Oportunidade</div>
-              <div className="text-2xl font-black text-amber-400 print:text-amber-600">{metrics.opportunityScore}/100</div>
+              <div 
+                className="text-2xl font-black"
+                style={{ color: config.primaryHex }}
+              >
+                {metrics.opportunityScore}/100
+              </div>
               <div className="text-xs font-semibold text-emerald-400 print:text-emerald-700">{metrics.maturityLevel}</div>
             </div>
           </div>

@@ -25,8 +25,14 @@ import { Step5FuelEfficiency } from './components/steps/Step5FuelEfficiency';
 import { Step6CommercialStrategy } from './components/steps/Step6CommercialStrategy';
 import { SurveyReportModal } from './components/SurveyReportModal';
 import { SavedSurveysView } from './components/SavedSurveysView';
+import { ThemeOptionsMenu } from './components/ThemeOptionsMenu';
+import { OfflineIndicator } from './components/OfflineIndicator';
+import { useTheme } from './context/ThemeContext';
 
 export default function App() {
+  const { themeMode, config } = useTheme();
+  const isDark = themeMode === 'dark';
+
   const [currentView, setCurrentView] = useState<'form' | 'list'>('form');
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState<FormDataState>(() => getCurrentDraft());
@@ -149,17 +155,23 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
+    <div className={`min-h-screen w-full max-w-full overflow-x-hidden flex flex-col font-sans transition-colors ${
+      isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'
+    }`}>
       {/* Top Navbar */}
       <Navbar
         currentView={currentView}
         onSelectView={setCurrentView}
         savedCount={savedCollections.length}
         isDraftSaved={isDraftSaved}
+        onFillConsultantName={(name) => {
+          handleFormUpdate({ consultantName: name });
+          showToast(`Nome preenchido no laudo: ${name}`);
+        }}
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-3.5 sm:p-6 lg:p-8 overflow-x-hidden">
         {currentView === 'list' ? (
           <SavedSurveysView
             collections={savedCollections}
@@ -182,7 +194,9 @@ export default function App() {
             />
 
             {/* Step Form Container */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-8 shadow-2xl backdrop-blur">
+            <div className={`border rounded-2xl p-5 sm:p-8 shadow-2xl backdrop-blur transition-colors ${
+              isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200'
+            }`}>
               {currentStep === 1 && (
                 <Step1ClientInfo formData={formData} onChange={handleFormUpdate} />
               )}
@@ -203,14 +217,20 @@ export default function App() {
               )}
 
               {/* Bottom Form Navigation Controls */}
-              <div className="mt-8 pt-6 border-t border-slate-800 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
+              <div className={`mt-8 pt-6 border-t flex flex-col-reverse sm:flex-row items-center justify-between gap-3 ${
+                isDark ? 'border-slate-800' : 'border-slate-200'
+              }`}>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
                   {currentStep > 1 && (
                     <button
                       type="button"
                       id="btn-etapa-anterior"
                       onClick={handlePrevStep}
-                      className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold border border-slate-700 transition-colors w-full sm:w-auto"
+                      className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border transition-colors w-full sm:w-auto ${
+                        isDark 
+                          ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700' 
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
+                      }`}
                     >
                       <ArrowLeft className="w-4 h-4" />
                       <span>Etapa Anterior</span>
@@ -220,10 +240,14 @@ export default function App() {
                   <button
                     type="button"
                     onClick={handleSaveDraft}
-                    className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-sm font-medium border border-slate-800 transition-colors w-full sm:w-auto"
+                    className={`flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium border transition-colors w-full sm:w-auto ${
+                      isDark 
+                        ? 'bg-slate-800/80 hover:bg-slate-700 text-slate-300 border-slate-800' 
+                        : 'bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-300'
+                    }`}
                     title="Salvar progresso atual"
                   >
-                    <Save className="w-4 h-4 text-amber-400" />
+                    <Save className="w-4 h-4" style={{ color: config.primaryHex }} />
                     <span>Salvar Rascunho</span>
                   </button>
                 </div>
@@ -234,7 +258,11 @@ export default function App() {
                       type="button"
                       id="btn-proxima-etapa"
                       onClick={handleNextStep}
-                      className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-sm font-bold shadow-lg shadow-amber-500/25 transition-all w-full sm:w-auto"
+                      className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-slate-950 text-sm font-bold shadow-lg transition-all hover:opacity-90 w-full sm:w-auto"
+                      style={{ 
+                        backgroundColor: config.primaryHex,
+                        boxShadow: `0 10px 20px -5px ${config.primaryHex}40`
+                      }}
                     >
                       <span>Próxima Etapa</span>
                       <ArrowRight className="w-4 h-4" />
@@ -265,17 +293,27 @@ export default function App() {
         />
       )}
 
+      {/* Theme Options Modal */}
+      <ThemeOptionsMenu />
+
+      {/* PWA Offline Connection Indicator */}
+      <OfflineIndicator />
+
       {/* Floating Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 border border-slate-700 text-slate-100 px-4 py-3 rounded-xl shadow-2xl text-sm font-medium flex items-center gap-2.5 animate-bounce">
-          <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
-          <span>{toastMessage}</span>
+        <div className={`fixed bottom-6 left-4 sm:left-auto right-4 sm:right-6 max-w-[calc(100vw-2rem)] z-50 border px-4 py-3 rounded-xl shadow-2xl text-sm font-medium flex items-center gap-2.5 animate-bounce ${
+          isDark ? 'bg-slate-900 border-slate-700 text-slate-100' : 'bg-white border-slate-200 text-slate-900 shadow-xl'
+        }`}>
+          <Sparkles className="w-4 h-4 shrink-0" style={{ color: config.primaryHex }} />
+          <span className="truncate">{toastMessage}</span>
         </div>
       )}
 
       {/* App Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950/80 py-4 text-center text-xs text-slate-500 print:hidden">
-        <p>RecapData Pro • Sistema de Coleta Técnica de Pneus para Reformadoras e Recapadoras</p>
+      <footer className={`border-t py-4 text-center text-xs transition-colors print:hidden ${
+        isDark ? 'border-slate-900 bg-slate-950/80 text-slate-500' : 'border-slate-200 bg-white/80 text-slate-500'
+      }`}>
+        <p>RecapData • Sistema PWA & Mobile de Coleta Técnica de Pneus para Reformadoras e Vendedores</p>
       </footer>
     </div>
   );

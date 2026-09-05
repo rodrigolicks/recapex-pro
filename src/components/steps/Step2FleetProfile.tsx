@@ -54,7 +54,7 @@ export const Step2FleetProfile: React.FC<Step2Props> = ({ formData, onChange }) 
                 key={config.id}
                 id={`vehicle-card-${config.id}`}
                 onClick={() => toggleVehicleType(config.id)}
-                className={`cursor-pointer rounded-xl p-3.5 border transition-all relative flex flex-col justify-between ${
+                className={`cursor-pointer rounded-xl p-3.5 border transition-all relative flex flex-col justify-between w-full max-w-full overflow-hidden ${
                   isSelected
                     ? 'bg-sky-950/40 border-sky-500 shadow-md shadow-sky-950/50 ring-1 ring-sky-500/50'
                     : 'bg-slate-900/70 border-slate-800 hover:border-slate-700 hover:bg-slate-800/40'
@@ -77,15 +77,21 @@ export const Step2FleetProfile: React.FC<Step2Props> = ({ formData, onChange }) 
                 </div>
 
                 {/* SVG Silhouette */}
-                <div className="py-2 px-1 flex items-center justify-center my-1 bg-slate-950/60 rounded-lg border border-slate-800/80">
-                  <FleetSilhouette type={config.id} selected={isSelected} className="w-full h-14 object-contain" />
+                <div className="py-2 px-1 flex items-center justify-center my-1 bg-slate-950/60 rounded-lg border border-slate-800/80 overflow-hidden max-w-full">
+                  <FleetSilhouette type={config.id} selected={isSelected} className="w-full max-w-full h-14 object-contain" />
                 </div>
 
                 <div className="mt-2">
                   <h4 className={`text-sm font-semibold ${isSelected ? 'text-sky-300' : 'text-slate-200'}`}>
                     {config.label}
                   </h4>
-                  <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">{config.sublabel}</p>
+                  <p className="text-xs text-slate-400 mt-0.5">{config.sublabel}</p>
+                  {config.axleScheme && (
+                    <div className="mt-2 pt-1.5 border-t border-slate-800/80 text-[11px] text-slate-400">
+                      <span className="font-semibold text-sky-400">Eixos: </span>
+                      <span>{config.axleScheme}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             );

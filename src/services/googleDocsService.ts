@@ -12,7 +12,7 @@ export interface GeneratedDocResult {
 export const createPitchDocumentInGoogleDocs = async (
   accessToken: string
 ): Promise<GeneratedDocResult> => {
-  const title = `RecapData Pro - Proposta Executiva & Pitch de Plataforma de Inteligência e Pós-Venda para Recapadoras`;
+  const title = `RecapData - Proposta Executiva & Pitch de Plataforma de Inteligência e Pós-Venda para Recapadoras`;
 
   // 1. Create Document
   const createRes = await fetch('https://docs.googleapis.com/v1/documents', {
